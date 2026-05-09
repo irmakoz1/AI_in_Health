@@ -1,0 +1,9 @@
+langgraph
+langchain
+easyocr
+transformers
+torch
+opencv-python
+pydantic
+pyyaml
+kagglehub
