@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Swiss Medical OCR</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -22,19 +27,37 @@
       align-items: center;
       gap: 1rem;
     }
-    header h1 { font-size: 1.4rem; font-weight: 600; }
-    header p { font-size: 0.85rem; opacity: 0.85; }
 
-    main { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    header p {
+      font-size: 0.85rem;
+      opacity: 0.85;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
 
     .card {
       background: white;
       border-radius: 12px;
-      box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
       padding: 1.5rem;
       margin-bottom: 1.5rem;
     }
-    .card h2 { font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: #374151; }
+
+    .card h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #374151;
+    }
 
     /* Upload zone */
     #drop-zone {
@@ -45,29 +68,85 @@
       cursor: pointer;
       transition: background .15s;
     }
-    #drop-zone.over { background: #eff6ff; }
-    #drop-zone svg { width: 48px; height: 48px; color: #93c5fd; margin-bottom: .75rem; }
-    #drop-zone p { color: #6b7280; font-size: 0.9rem; }
-    #drop-zone strong { color: #1a56db; }
-    #file-input { display: none; }
 
-    #preview-wrap { margin-top: 1rem; display: none; text-align: center; }
-    #preview-img { max-height: 300px; border-radius: 8px; border: 1px solid #e5e7eb; }
+    #drop-zone.over {
+      background: #eff6ff;
+    }
 
-    /* Camera */
-    #camera-section { display: none; }
-    #video { width: 100%; border-radius: 8px; background: #000; }
-    #canvas { display: none; }
+    #drop-zone svg {
+      width: 48px;
+      height: 48px;
+      color: #93c5fd;
+      margin-bottom: .75rem;
+    }
 
-    /* Patient form */
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
-    .form-grid label { font-size: 0.82rem; color: #374151; display: block; margin-bottom: .25rem; }
-    .form-grid input {
-      width: 100%; padding: .4rem .6rem;
-      border: 1px solid #d1d5db; border-radius: 6px;
+    #drop-zone p {
+      color: #6b7280;
       font-size: 0.9rem;
     }
-    .form-grid input:focus { outline: none; border-color: #1a56db; box-shadow: 0 0 0 2px #bfdbfe; }
+
+    #drop-zone strong {
+      color: #1a56db;
+    }
+
+    #file-input {
+      display: none;
+    }
+
+    #preview-wrap {
+      margin-top: 1rem;
+      display: none;
+      text-align: center;
+    }
+
+    #preview-img {
+      max-height: 300px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    /* Camera */
+    #camera-section {
+      display: none;
+    }
+
+    #video {
+      width: 100%;
+      border-radius: 8px;
+      background: #000;
+    }
+
+    #canvas {
+      display: none;
+    }
+
+    /* Patient form */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .75rem;
+    }
+
+    .form-grid label {
+      font-size: 0.82rem;
+      color: #374151;
+      display: block;
+      margin-bottom: .25rem;
+    }
+
+    .form-grid input {
+      width: 100%;
+      padding: .4rem .6rem;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+
+    .form-grid input:focus {
+      outline: none;
+      border-color: #1a56db;
+      box-shadow: 0 0 0 2px #bfdbfe;
+    }
 
     /* Buttons */
     .btn {
@@ -79,286 +158,412 @@
       font-weight: 500;
       transition: opacity .15s;
     }
-    .btn:disabled { opacity: .45; cursor: not-allowed; }
-    .btn-primary { background: #1a56db; color: white; }
-    .btn-secondary { background: #e5e7eb; color: #374151; }
-    .btn-small { padding: .35rem .8rem; font-size: 0.8rem; }
-    .btn-row { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 1rem; }
+
+    .btn:disabled {
+      opacity: .45;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: #1a56db;
+      color: white;
+    }
+
+    .btn-secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-small {
+      padding: .35rem .8rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: .75rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
 
     /* Spinner */
     .spinner {
-      display: none; width: 20px; height: 20px;
-      border: 3px solid #e5e7eb; border-top-color: #1a56db;
-      border-radius: 50%; animation: spin .7s linear infinite;
+      display: none;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #e5e7eb;
+      border-top-color: #1a56db;
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
       margin: auto;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
 
     /* Results */
-    #results { display: none; }
+    #results {
+      display: none;
+    }
 
     .status-badge {
-      display: inline-block; padding: .25rem .7rem;
-      border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem;
+      display: inline-block;
+      padding: .25rem .7rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
     }
-    .status-ok { background: #d1fae5; color: #065f46; }
-    .status-flagged { background: #fef3c7; color: #92400e; }
-    .status-blocked { background: #fee2e2; color: #991b1b; }
-    .status-pending_review { background: #e0e7ff; color: #3730a3; }
+
+    .status-ok {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    .status-flagged {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-blocked {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .status-pending_review {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
 
     .rx-card {
-      border: 1px solid #e5e7eb; border-radius: 8px;
-      padding: 1rem; margin-bottom: .75rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: .75rem;
     }
-    .rx-card h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: .5rem; }
-    .rx-detail { font-size: 0.85rem; color: #6b7280; margin-bottom: .2rem; }
-    .rx-detail span { color: #111827; font-weight: 500; }
+
+    .rx-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: .5rem;
+    }
+
+    .rx-detail {
+      font-size: 0.85rem;
+      color: #6b7280;
+      margin-bottom: .2rem;
+    }
+
+    .rx-detail span {
+      color: #111827;
+      font-weight: 500;
+    }
 
     .finding {
-      font-size: 0.82rem; padding: .3rem .6rem;
-      border-radius: 5px; margin-top: .4rem;
-    }
-    .finding-INFO { background: #f0f9ff; color: #075985; }
-    .finding-WARNING { background: #fffbeb; color: #92400e; }
-    .finding-BLOCK { background: #fee2e2; color: #991b1b; }
-
-    .confidence-bar { height: 4px; background: #e5e7eb; border-radius: 2px; margin-top: .4rem; }
-    .confidence-fill { height: 100%; border-radius: 2px; background: #1a56db; }
-
-    /* FHIR toggle */
-    details summary { cursor: pointer; font-size: 0.85rem; color: #1a56db; margin-top: .75rem; }
-    details pre {
-      background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 6px;
-      padding: .75rem; font-size: 0.75rem; overflow: auto; max-height: 250px;
+      font-size: 0.82rem;
+      padding: .3rem .6rem;
+      border-radius: 5px;
       margin-top: .4rem;
     }
 
-    .tab-row { display: flex; gap: 0; border-bottom: 2px solid #e5e7eb; margin-bottom: 1rem; }
-    .tab {
-      padding: .5rem 1rem; font-size: 0.875rem; cursor: pointer;
-      border-bottom: 2px solid transparent; margin-bottom: -2px; color: #6b7280;
+    .finding-INFO {
+      background: #f0f9ff;
+      color: #075985;
     }
-    .tab.active { border-color: #1a56db; color: #1a56db; font-weight: 600; }
 
-    .error-box { background: #fee2e2; color: #991b1b; border-radius: 8px; padding: 1rem; font-size: 0.875rem; }
+    .finding-WARNING {
+      background: #fffbeb;
+      color: #92400e;
+    }
+
+    .finding-BLOCK {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .confidence-bar {
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+      margin-top: .4rem;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      border-radius: 2px;
+      background: #1a56db;
+    }
+
+    /* FHIR toggle */
+    details summary {
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #1a56db;
+      margin-top: .75rem;
+    }
+
+    details pre {
+      background: #f8fafc;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: .75rem;
+      font-size: 0.75rem;
+      overflow: auto;
+      max-height: 250px;
+      margin-top: .4rem;
+    }
+
+    .tab-row {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid #e5e7eb;
+      margin-bottom: 1rem;
+    }
+
+    .tab {
+      padding: .5rem 1rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      color: #6b7280;
+    }
+
+    .tab.active {
+      border-color: #1a56db;
+      color: #1a56db;
+      font-weight: 600;
+    }
+
+    .error-box {
+      background: #fee2e2;
+      color: #991b1b;
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 0.875rem;
+    }
   </style>
 </head>
+
 <body>
 
-<header>
-  <div>
-    <h1>Swiss Medical OCR</h1>
-    <p>Handwritten prescription reader — DE / FR / IT</p>
-  </div>
-</header>
+  <header>
+    <div>
+      <h1>Swiss Medical OCR</h1>
+      <p>Handwritten prescription reader — DE / FR / IT</p>
+    </div>
+  </header>
 
-<main>
+  <main>
 
-  <!-- Input card -->
-  <div class="card">
-    <h2>Upload Prescription</h2>
+    <!-- Input card -->
+    <div class="card">
+      <h2>Upload Prescription</h2>
 
-    <div class="tab-row">
-      <div class="tab active" id="tab-upload" onclick="switchTab('upload')">Upload File</div>
-      <div class="tab" id="tab-camera" onclick="switchTab('camera')">Live Camera</div>
+      <div class="tab-row">
+        <div class="tab active" id="tab-upload" onclick="switchTab('upload')">Upload File</div>
+        <div class="tab" id="tab-camera" onclick="switchTab('camera')">Live Camera</div>
+      </div>
+
+      <!-- File upload -->
+      <div id="upload-section">
+        <div id="drop-zone" onclick="document.getElementById('file-input').click()">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+          </svg>
+          <p><strong>Click to browse</strong> or drag &amp; drop</p>
+          <p>JPG · PNG · TIFF · PDF · DICOM — max 20 MB</p>
+        </div>
+        <input type="file" id="file-input" accept="image/*,.pdf,.dcm" />
+        <div id="preview-wrap">
+          <img id="preview-img" alt="preview" />
+        </div>
+      </div>
+
+      <!-- Camera -->
+      <div id="camera-section">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+        <div class="btn-row">
+          <button class="btn btn-primary" onclick="startCamera()">Start Camera</button>
+          <button class="btn btn-secondary" onclick="capturePhoto()">Capture</button>
+          <button class="btn btn-secondary btn-small" onclick="stopCamera()">Stop</button>
+        </div>
+      </div>
     </div>
 
-    <!-- File upload -->
-    <div id="upload-section">
-      <div id="drop-zone" onclick="document.getElementById('file-input').click()">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-            d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
-        </svg>
-        <p><strong>Click to browse</strong> or drag &amp; drop</p>
-        <p>JPG · PNG · TIFF · PDF · DICOM — max 20 MB</p>
-      </div>
-      <input type="file" id="file-input" accept="image/*,.pdf,.dcm" />
-      <div id="preview-wrap">
-        <img id="preview-img" alt="preview" />
-      </div>
-    </div>
-
-    <!-- Camera -->
-    <div id="camera-section">
-      <video id="video" autoplay playsinline></video>
-      <canvas id="canvas"></canvas>
-      <div class="btn-row">
-        <button class="btn btn-primary" onclick="startCamera()">Start Camera</button>
-        <button class="btn btn-secondary" onclick="capturePhoto()">Capture</button>
-        <button class="btn btn-secondary btn-small" onclick="stopCamera()">Stop</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Patient context card -->
-  <div class="card">
-    <h2>Patient Context <span style="font-weight:400;color:#9ca3af;font-size:.8rem">(optional)</span></h2>
-    <div class="form-grid">
-      <div>
-        <label>Age (years)</label>
-        <input type="number" id="pt-age" placeholder="e.g. 72" min="0" max="130" />
-      </div>
-      <div>
-        <label>Weight (kg)</label>
-        <input type="number" id="pt-weight" placeholder="e.g. 68" min="1" max="300" />
-      </div>
-      <div>
-        <label>eGFR (mL/min/1.73m²)</label>
-        <input type="number" id="pt-egfr" placeholder="e.g. 45" min="0" max="150" />
-      </div>
-      <div>
-        <label>Pregnancy Category (A/B/C/D/X)</label>
-        <input type="text" id="pt-pregnancy" placeholder="e.g. B" maxlength="1" />
-      </div>
-      <div>
-        <label>Allergies (comma-separated)</label>
-        <input type="text" id="pt-allergies" placeholder="e.g. penicillin, aspirin" />
-      </div>
-      <div>
-        <label>Current Medications (comma-separated)</label>
-        <input type="text" id="pt-meds" placeholder="e.g. warfarin, metoprolol" />
+    <!-- Patient context card -->
+    <div class="card">
+      <h2>Patient Context <span style="font-weight:400;color:#9ca3af;font-size:.8rem">(optional)</span></h2>
+      <div class="form-grid">
+        <div>
+          <label>Age (years)</label>
+          <input type="number" id="pt-age" placeholder="e.g. 72" min="0" max="130" />
+        </div>
+        <div>
+          <label>Weight (kg)</label>
+          <input type="number" id="pt-weight" placeholder="e.g. 68" min="1" max="300" />
+        </div>
+        <div>
+          <label>eGFR (mL/min/1.73m²)</label>
+          <input type="number" id="pt-egfr" placeholder="e.g. 45" min="0" max="150" />
+        </div>
+        <div>
+          <label>Pregnancy Category (A/B/C/D/X)</label>
+          <input type="text" id="pt-pregnancy" placeholder="e.g. B" maxlength="1" />
+        </div>
+        <div>
+          <label>Allergies (comma-separated)</label>
+          <input type="text" id="pt-allergies" placeholder="e.g. penicillin, aspirin" />
+        </div>
+        <div>
+          <label>Current Medications (comma-separated)</label>
+          <input type="text" id="pt-meds" placeholder="e.g. warfarin, metoprolol" />
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Submit -->
-  <div class="btn-row">
-    <button class="btn btn-primary" id="submit-btn" onclick="submitOCR()" disabled>
-      Analyse Prescription
-    </button>
-    <button class="btn btn-secondary" onclick="reset()">Reset</button>
-  </div>
+    <!-- Submit -->
+    <div class="btn-row">
+      <button class="btn btn-primary" id="submit-btn" onclick="submitOCR()" disabled>
+        Analyse Prescription
+      </button>
+      <button class="btn btn-secondary" onclick="reset()">Reset</button>
+    </div>
 
-  <div class="spinner" id="spinner" style="margin-top:1.5rem"></div>
+    <div class="spinner" id="spinner" style="margin-top:1.5rem"></div>
 
-  <!-- Results -->
-  <div id="results" class="card" style="margin-top:1.5rem">
-    <h2>Results</h2>
-    <div id="results-content"></div>
-  </div>
+    <!-- Results -->
+    <div id="results" class="card" style="margin-top:1.5rem">
+      <h2>Results</h2>
+      <div id="results-content"></div>
+    </div>
 
-</main>
+  </main>
 
-<script>
-  let capturedFile = null;
-  let stream = null;
+  <script>
+    let capturedFile = null;
+    let stream = null;
 
-  // ── Drag & drop ──────────────────────────────────────────────────────────
-  const dropZone = document.getElementById('drop-zone');
-  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('over'); });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
-  dropZone.addEventListener('drop', e => {
-    e.preventDefault();
-    dropZone.classList.remove('over');
-    if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-  });
-  document.getElementById('file-input').addEventListener('change', e => {
-    if (e.target.files.length) handleFile(e.target.files[0]);
-  });
+    // ── Drag & drop ──────────────────────────────────────────────────────────
+    const dropZone = document.getElementById('drop-zone');
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('over');
+      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+    document.getElementById('file-input').addEventListener('change', e => {
+      if (e.target.files.length) handleFile(e.target.files[0]);
+    });
 
-  function handleFile(file) {
-    capturedFile = file;
-    document.getElementById('submit-btn').disabled = false;
-    if (file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = ev => {
-        document.getElementById('preview-img').src = ev.target.result;
-        document.getElementById('preview-wrap').style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    } else {
-      document.getElementById('preview-wrap').style.display = 'none';
-    }
-  }
-
-  // ── Tabs ─────────────────────────────────────────────────────────────────
-  function switchTab(tab) {
-    document.getElementById('tab-upload').classList.toggle('active', tab === 'upload');
-    document.getElementById('tab-camera').classList.toggle('active', tab === 'camera');
-    document.getElementById('upload-section').style.display = tab === 'upload' ? 'block' : 'none';
-    document.getElementById('camera-section').style.display = tab === 'camera' ? 'block' : 'none';
-    if (tab === 'upload') stopCamera();
-  }
-
-  // ── Camera ───────────────────────────────────────────────────────────────
-  async function startCamera() {
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-      document.getElementById('video').srcObject = stream;
-    } catch (e) {
-      alert('Camera access denied or unavailable: ' + e.message);
-    }
-  }
-
-  function capturePhoto() {
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-    canvas.getContext('2d').drawImage(video, 0, 0);
-    canvas.toBlob(blob => {
-      const file = new File([blob], 'capture.jpg', { type: 'image/jpeg' });
-      handleFile(file);
-      document.getElementById('preview-img').src = canvas.toDataURL();
-      document.getElementById('preview-wrap').style.display = 'block';
-      switchTab('upload');
-    }, 'image/jpeg', 0.95);
-  }
-
-  function stopCamera() {
-    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
-  }
-
-  // ── Submit ────────────────────────────────────────────────────────────────
-  async function submitOCR() {
-    if (!capturedFile) return;
-    document.getElementById('spinner').style.display = 'block';
-    document.getElementById('results').style.display = 'none';
-    document.getElementById('submit-btn').disabled = true;
-
-    const form = new FormData();
-    form.append('file', capturedFile);
-    const age = document.getElementById('pt-age').value;
-    const weight = document.getElementById('pt-weight').value;
-    const egfr = document.getElementById('pt-egfr').value;
-    if (age) form.append('patient_age', age);
-    if (weight) form.append('patient_weight', weight);
-    if (egfr) form.append('egfr', egfr);
-    form.append('allergies', document.getElementById('pt-allergies').value);
-    form.append('medications', document.getElementById('pt-meds').value);
-
-    try {
-      const resp = await fetch('http://localhost:8000/ocr', { method: 'POST', body: form });
-      const data = await resp.json();
-      if (!resp.ok) throw new Error(data.detail || resp.statusText);
-      renderResults(data);
-    } catch (err) {
-      document.getElementById('results-content').innerHTML =
-        `<div class="error-box">Error: ${err.message}</div>`;
-    } finally {
-      document.getElementById('spinner').style.display = 'none';
-      document.getElementById('results').style.display = 'block';
+    function handleFile(file) {
+      capturedFile = file;
       document.getElementById('submit-btn').disabled = false;
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = ev => {
+          document.getElementById('preview-img').src = ev.target.result;
+          document.getElementById('preview-wrap').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        document.getElementById('preview-wrap').style.display = 'none';
+      }
     }
-  }
 
-  function renderResults(data) {
-    const statusClass = `status-${data.status}`;
-    const statusLabel = data.status.replace('_', ' ').toUpperCase();
-    let html = `<span class="status-badge ${statusClass}">${statusLabel}</span>`;
-    html += `<p style="font-size:.85rem;color:#6b7280;margin-bottom:1rem">Document ID: <code>${data.document_id}</code></p>`;
-
-    if (!data.prescriptions.length) {
-      html += '<p style="color:#6b7280">No prescriptions detected.</p>';
+    // ── Tabs ─────────────────────────────────────────────────────────────────
+    function switchTab(tab) {
+      document.getElementById('tab-upload').classList.toggle('active', tab === 'upload');
+      document.getElementById('tab-camera').classList.toggle('active', tab === 'camera');
+      document.getElementById('upload-section').style.display = tab === 'upload' ? 'block' : 'none';
+      document.getElementById('camera-section').style.display = tab === 'camera' ? 'block' : 'none';
+      if (tab === 'upload') stopCamera();
     }
 
-    data.prescriptions.forEach((rx, i) => {
-      const vr = data.validation[i] || {};
-      const findings = vr.findings || [];
-      const conf = Math.round((rx.confidence || 0) * 100);
+    // ── Camera ───────────────────────────────────────────────────────────────
+    async function startCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        document.getElementById('video').srcObject = stream;
+      } catch (e) {
+        alert('Camera access denied or unavailable: ' + e.message);
+      }
+    }
 
-      html += `<div class="rx-card">
+    function capturePhoto() {
+      const video = document.getElementById('video');
+      const canvas = document.getElementById('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+      canvas.toBlob(blob => {
+        const file = new File([blob], 'capture.jpg', { type: 'image/jpeg' });
+        handleFile(file);
+        document.getElementById('preview-img').src = canvas.toDataURL();
+        document.getElementById('preview-wrap').style.display = 'block';
+        switchTab('upload');
+      }, 'image/jpeg', 0.95);
+    }
+
+    function stopCamera() {
+      if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+    }
+
+    // ── Submit ────────────────────────────────────────────────────────────────
+    async function submitOCR() {
+      if (!capturedFile) return;
+      document.getElementById('spinner').style.display = 'block';
+      document.getElementById('results').style.display = 'none';
+      document.getElementById('submit-btn').disabled = true;
+
+      const form = new FormData();
+      form.append('file', capturedFile);
+      const age = document.getElementById('pt-age').value;
+      const weight = document.getElementById('pt-weight').value;
+      const egfr = document.getElementById('pt-egfr').value;
+      if (age) form.append('patient_age', age);
+      if (weight) form.append('patient_weight', weight);
+      if (egfr) form.append('egfr', egfr);
+      form.append('allergies', document.getElementById('pt-allergies').value);
+      form.append('medications', document.getElementById('pt-meds').value);
+
+      try {
+        const resp = await fetch('https://web-production-75d26.up.railway.app/ocr', { method: 'POST', body: form });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.detail || resp.statusText);
+        renderResults(data);
+      } catch (err) {
+        document.getElementById('results-content').innerHTML =
+          `<div class="error-box">Error: ${err.message}</div>`;
+      } finally {
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+        document.getElementById('submit-btn').disabled = false;
+      }
+    }
+
+    function renderResults(data) {
+      const statusClass = `status-${data.status}`;
+      const statusLabel = data.status.replace('_', ' ').toUpperCase();
+      let html = `<span class="status-badge ${statusClass}">${statusLabel}</span>`;
+      html += `<p style="font-size:.85rem;color:#6b7280;margin-bottom:1rem">Document ID: <code>${data.document_id}</code></p>`;
+
+      if (!data.prescriptions.length) {
+        html += '<p style="color:#6b7280">No prescriptions detected.</p>';
+      }
+
+      data.prescriptions.forEach((rx, i) => {
+        const vr = data.validation[i] || {};
+        const findings = vr.findings || [];
+        const conf = Math.round((rx.confidence || 0) * 100);
+
+        html += `<div class="rx-card">
         <h3>${rx.drug_name || 'Unknown drug'}</h3>
         <div class="rx-detail">Dosage: <span>${rx.dosage_value ?? '—'} ${rx.dosage_unit}</span></div>
         <div class="rx-detail">Frequency: <span>${rx.frequency || '—'}</span></div>
@@ -367,31 +572,32 @@
         <div class="rx-detail">OCR confidence: <span>${conf}%</span></div>
         <div class="confidence-bar"><div class="confidence-fill" style="width:${conf}%"></div></div>`;
 
-      findings.forEach(f => {
-        html += `<div class="finding finding-${f.severity}">[${f.severity}] ${f.message}</div>`;
+        findings.forEach(f => {
+          html += `<div class="finding finding-${f.severity}">[${f.severity}] ${f.message}</div>`;
+        });
+
+        html += '</div>';
       });
 
-      html += '</div>';
-    });
-
-    if (data.fhir_bundle) {
-      html += `<details><summary>View FHIR R4 Bundle</summary>
+      if (data.fhir_bundle) {
+        html += `<details><summary>View FHIR R4 Bundle</summary>
         <pre>${JSON.stringify(data.fhir_bundle, null, 2)}</pre></details>`;
+      }
+
+      document.getElementById('results-content').innerHTML = html;
     }
 
-    document.getElementById('results-content').innerHTML = html;
-  }
-
-  function reset() {
-    capturedFile = null;
-    document.getElementById('file-input').value = '';
-    document.getElementById('preview-wrap').style.display = 'none';
-    document.getElementById('submit-btn').disabled = true;
-    document.getElementById('results').style.display = 'none';
-    ['pt-age','pt-weight','pt-egfr','pt-pregnancy','pt-allergies','pt-meds'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
-  }
-</script>
+    function reset() {
+      capturedFile = null;
+      document.getElementById('file-input').value = '';
+      document.getElementById('preview-wrap').style.display = 'none';
+      document.getElementById('submit-btn').disabled = true;
+      document.getElementById('results').style.display = 'none';
+      ['pt-age', 'pt-weight', 'pt-egfr', 'pt-pregnancy', 'pt-allergies', 'pt-meds'].forEach(id => {
+        document.getElementById(id).value = '';
+      });
+    }
+  </script>
 </body>
+
 </html>
