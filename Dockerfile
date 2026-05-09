@@ -13,25 +13,16 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements
+# Copy your full requirements.txt
 COPY requirements.txt .
 
-# Install Python dependencies (skip torch if too large)
-RUN pip install --no-cache-dir \
-    fastapi==0.136.1 \
-    uvicorn==0.46.0 \
-    python-multipart==0.0.27 \
-    python-dotenv==1.2.2 \
-    anthropic==0.100.0 \
-    easyocr==1.7.2 \
-    opencv-python-headless==4.13.0.92 \
-    numpy==1.26.4 \
-    pillow==12.2.0
+# Install all your dependencies (pip will resolve conflicts)
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application
+# Copy application code
 COPY . .
 
-# Create temp directory
+# Create necessary directories
 RUN mkdir -p temp
 
 EXPOSE 8000
