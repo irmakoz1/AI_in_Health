@@ -1,5 +1,5 @@
 # AI_in_Health
 
-working: tests\pipeline_test2.py
+working: tests\pipeline_test.py
 
 image-> paddleocr->Claude-> Medication
