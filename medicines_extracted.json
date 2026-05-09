@@ -4,44 +4,29 @@
   "extracted_text": "Medicine\nSTALEV0125/312S/200\n06\nDose\nRoute Start date Frequency\nPOHX5\nDeane\n12\nBleep\n234\nGMCNO.235\nIndicatiop & Additional Instructions\nAgosins\nPharmacist\nCheck\n14\nLEVODOPA\nCALBIDOPA\nSupply\nSupply\n18\nENTACAPONE\nMedicines Reconciliation (circie)\nIncreased\nDecreased\nNew\n0200\nNo change\ndose\ndose",
   "medicines": [
     {
-      "medicine_name": "STALEVO",
-      "ocr_text": "STALEV",
-      "dosage": "012mg",
-      "confidence": 0.85
+      "ocr_text": "STALEV0125/312S/200",
+      "medicine_name": "Stalevo",
+      "dosage": "125/31.25/200",
+      "confidence": 0.9
     },
     {
-      "medicine_name": "LEVODOPA",
       "ocr_text": "LEVODOPA",
-      "dosage": "14mg",
+      "medicine_name": "Levodopa",
+      "dosage": "",
       "confidence": 0.95
     },
     {
-      "medicine_name": "CARBIDOPA",
       "ocr_text": "CALBIDOPA",
-      "dosage": "14mg",
-      "confidence": 0.85
-    },
-    {
-      "medicine_name": "ENTACAPONE",
-      "ocr_text": "ENTACAPONE",
-      "dosage": "18mg",
+      "medicine_name": "Carbidopa",
+      "dosage": "",
       "confidence": 0.95
     },
     {
-      "medicine_name": "LEVOTHYROXINE",
-      "ocr_text": "LEVO",
-      "dosage": "14mg",
-      "confidence": 0.85
+      "ocr_text": "ENTACAPONE",
+      "medicine_name": "Entacapone",
+      "dosage": "",
+      "confidence": 0.95
     }
   ],
-  "dosages": [
-    "12mg",
-    "18mg",
-    "200mg",
-    "234mg",
-    "14mg",
-    "235mg",
-    "06mg"
-  ],
-  "overall_confidence": 0.8899999999999999
+  "claude_used": true
 }

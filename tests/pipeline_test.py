@@ -1,103 +1,38 @@
 """
-Medical Prescription Pipeline - Fuzzy Matching (No Claude)
-Works immediately without any API
+Medical Prescription Pipeline with Claude Opus 4.7
+Fixed for Claude Opus 4.7 API
 """
 
+import os
 import re
 import json
 import sys
 from pathlib import Path
-from difflib import SequenceMatcher
-from typing import List, Dict, Tuple, Optional
+from dotenv import load_dotenv
+from typing import List, Dict, Optional
 
-class MedicineExtractor:
-    def __init__(self):
-        # Medication patterns (OCR error -> correct name)
-        self.medicine_patterns = {
-            'stalevo': ['stalev', 'stal evo', 'stalevo', 'stalev0', 'stalevo12', 'STALEV', 'stalevo125'],
-            'levodopa': ['levodopa', 'levo dopa', 'l-dopa', 'levodop', 'levodopa'],
-            'carbidopa': ['carbidopa', 'calbidopa', 'carbidop', 'carbi dopa'],
-            'entacapone': ['entacapone', 'comtan', 'entacapon'],
-            'warfarin': ['warfarin', 'war farin', 'warfin'],
-            'aspirin': ['aspirin', 'asprin', 'aspirn'],
-            'metformin': ['metformin', 'met formin', 'metform'],
-            'levothyroxine': ['levothyroxine', 'levo', 'levothyr', 'levoxyl'],
-            'ibuprofen': ['ibuprofen', 'ibu profen', 'advil', 'motrin'],
-            'amoxicillin': ['amoxicillin', 'amox', 'amoxicil'],
-            'omeprazole': ['omeprazole', 'omeprazol', 'prilosec'],
-            'gabapentin': ['gabapentin', 'gabapent', 'neurontin'],
-        }
+# ============ FIND .env FILE IN ROOT ============
+script_path = Path(__file__).resolve()
+tests_dir = script_path.parent
+project_root = tests_dir.parent
 
-        self.medication_scores = {}
+env_path = project_root / '.env'
 
-    def similarity(self, a: str, b: str) -> float:
-        return SequenceMatcher(None, a.lower(), b.lower()).ratio()
+if env_path.exists():
+    load_dotenv(env_path)
+    print(f"✅ Loaded .env from: {env_path}")
+else:
+    print(f"❌ .env not found at: {env_path}")
+    sys.exit(1)
 
-    def extract_medicines(self, text: str) -> List[Dict]:
-        medicines = []
-        text_lower = text.lower()
+ANTHROPIC_API_KEY = os.environ.get('ANTHROPIC_API_KEY')
+if not ANTHROPIC_API_KEY:
+    print("❌ No API key found in .env")
+    sys.exit(1)
 
-        for correct_name, variants in self.medicine_patterns.items():
-            for variant in variants:
-                if variant in text_lower:
-                    # Find the actual OCR text
-                    pattern = re.compile(re.escape(variant), re.IGNORECASE)
-                    match = pattern.search(text)
-                    ocr_text = match.group(0) if match else variant
+print(f"✅ API key loaded (ending: ...{ANTHROPIC_API_KEY[-8:]})")
 
-                    # Calculate confidence
-                    confidence = 0.95 if variant == correct_name else 0.85
-
-                    # Find dosage near this medicine
-                    dosage = self._find_dosage(text, match.start() if match else 0)
-
-                    medicines.append({
-                        'medicine_name': correct_name.upper(),
-                        'ocr_text': ocr_text,
-                        'dosage': dosage,
-                        'confidence': confidence
-                    })
-                    break
-
-        # Remove duplicates
-        seen = set()
-        unique = []
-        for m in medicines:
-            if m['medicine_name'] not in seen:
-                seen.add(m['medicine_name'])
-                unique.append(m)
-
-        return unique
-
-    def _find_dosage(self, text: str, position: int) -> str:
-        if position == -1:
-            return ""
-
-        start = max(0, position - 30)
-        end = min(len(text), position + 50)
-        surrounding = text[start:end]
-
-        # Look for dosage patterns
-        patterns = [
-            r'(\d+(?:\.\d+)?)\s*(?:mg|mcg|g|ml)',
-            r'/(\d+)(?:/|$)',  # For patterns like /125/312/200
-            r'(\d{2,3})\s*(?:mg)?',
-        ]
-
-        for pattern in patterns:
-            match = re.search(pattern, surrounding, re.IGNORECASE)
-            if match:
-                if pattern == r'/(\d+)(?:/|$)':
-                    return match.group(0)
-                elif len(match.groups()) >= 2 and match.group(2):
-                    return f"{match.group(1)}{match.group(2)}"
-                else:
-                    return f"{match.group(1)}mg"
-
-        return ""
-
-
-# ============ OCR MODULE ============
+# ============ PADDLEOCR MODULE ============
 
 class PaddleOCRRunner:
     def __init__(self, verbose: bool = True):
@@ -139,7 +74,7 @@ class PaddleOCRRunner:
                 full_text = '\n'.join(texts)
                 if self.verbose:
                     print(f"   ✅ Extracted {len(full_text)} characters")
-                    print(f"   Preview: {full_text[:200]}...")
+                    print(f"   Preview: {full_text[:300]}...")
                 return full_text
             else:
                 print("   ⚠️ No text detected")
@@ -149,17 +84,135 @@ class PaddleOCRRunner:
             return ""
 
 
+# ============ CLAUDE EXTRACTOR ============
+
+class ClaudeExtractor:
+    def __init__(self):
+        try:
+            import anthropic
+            self.client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+            self.model = "claude-opus-4-7"
+            print(f"   ✅ Claude Opus 4.7 ready")
+            self.available = True
+        except Exception as e:
+            print(f"   ❌ Claude error: {e}")
+            self.available = False
+
+    def extract_medicines(self, text: str) -> List[Dict]:
+        if not self.available:
+            return []
+
+        print("\n   🤖 Claude Opus 4.7 analyzing prescription...")
+
+        # Removed temperature parameter - not supported in Opus 4.7
+        prompt = f"""Extract medications from this OCR text from a handwritten prescription.
+
+OCR Text:
+{text}
+
+Common OCR errors to watch for:
+- "STALEV0125/312S/200" means STALEVO
+- "CALBIDOPA" means CARBIDOPA
+
+Return ONLY valid JSON:
+{{"medicines": [
+  {{"ocr_text": "original text", "medicine_name": "correct name", "dosage": "dosage if found", "confidence": 0.95}}
+]}}
+
+If no medicines, return: {{"medicines": []}}"""
+
+        try:
+            response = self.client.messages.create(
+                model=self.model,
+                max_tokens=2000,
+                # temperature parameter removed - not supported
+                messages=[{"role": "user", "content": prompt}]
+            )
+
+            response_text = response.content[0].text
+            print(f"   📝 Claude response received")
+
+            # Extract JSON
+            json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
+
+            if json_match:
+                data = json.loads(json_match.group(0))
+                medicines = data.get('medicines', [])
+                print(f"   ✅ Found {len(medicines)} medicines")
+
+                for m in medicines:
+                    print(f"      - {m.get('medicine_name', '?')} (from: {m.get('ocr_text', '?')})")
+
+                return medicines
+            else:
+                print(f"   ⚠️ Could not parse JSON")
+                print(f"   Response: {response_text[:200]}")
+                return []
+
+        except Exception as e:
+            print(f"   ❌ Claude error: {e}")
+            return []
+
+
+# ============ FUZZY FALLBACK ============
+
+class FuzzyExtractor:
+    @staticmethod
+    def extract_medicines(text: str) -> List[Dict]:
+        medicines = []
+        text_lower = text.lower()
+
+        patterns = {
+            'stalevo': ['stalev', 'stal evo', 'stalevo', 'stalev0', 'stalevo12'],
+            'levodopa': ['levodopa', 'levo dopa', 'l-dopa', 'levodop'],
+            'carbidopa': ['carbidopa', 'calbidopa', 'carbidop'],
+        }
+
+        for correct_name, variants in patterns.items():
+            for variant in variants:
+                if variant in text_lower:
+                    medicines.append({
+                        'ocr_text': variant,
+                        'medicine_name': correct_name.upper(),
+                        'dosage': FuzzyExtractor._find_dosage(text, text.find(variant)),
+                        'confidence': 0.85
+                    })
+                    break
+
+        return medicines
+
+    @staticmethod
+    def _find_dosage(text: str, position: int) -> str:
+        if position == -1:
+            return ""
+        start = max(0, position - 20)
+        end = min(len(text), position + 40)
+        surrounding = text[start:end]
+
+        match = re.search(r'(\d+(?:\.\d+)?)\s*(?:mg|mcg|g|ml)', surrounding, re.IGNORECASE)
+        if match:
+            return match.group(0)
+
+        slash_match = re.search(r'(/\d+)+', surrounding)
+        if slash_match:
+            return slash_match.group(0)
+
+        return ""
+
+
 # ============ MAIN PIPELINE ============
 
 class MedicalPipeline:
     def __init__(self, verbose: bool = True):
         self.verbose = verbose
         self.ocr = PaddleOCRRunner(verbose)
-        self.extractor = MedicineExtractor()
+        self.claude = ClaudeExtractor()
+        self.fuzzy = FuzzyExtractor()
 
     def process(self, image_path: str) -> Dict:
         print("\n" + "=" * 70)
         print("🏥 MEDICAL PRESCRIPTION PIPELINE")
+        print(f"   Model: Claude Opus 4.7")
         print(f"   Image: {Path(image_path).name}")
         print("=" * 70)
 
@@ -167,95 +220,71 @@ class MedicalPipeline:
         text = self.ocr.extract_text(image_path)
 
         if not text:
+            print("\n❌ No text extracted")
             return {'success': False, 'medicines': []}
 
-        # Step 2: Extract medicines
+        # Step 2: Extract medicines with Claude
         print("\n" + "=" * 60)
         print("🩺 STEP 2: MEDICINE EXTRACTION")
         print("=" * 60)
 
-        medicines = self.extractor.extract_medicines(text)
-        dosages = self._extract_all_dosages(text)
+        medicines = self.claude.extract_medicines(text)
+
+        # Fallback to fuzzy if Claude found nothing
+        if not medicines:
+            print("\n   📊 Claude found nothing, trying fuzzy matching...")
+            medicines = self.fuzzy.extract_medicines(text)
 
         # Print results
-        print(f"\n   💊 Medicines found:")
-        if medicines:
-            for m in medicines:
-                print(f"\n      • '{m['ocr_text']}' → {m['medicine_name']}")
-                if m['dosage']:
-                    print(f"        Dosage: {m['dosage']}")
-                print(f"        Confidence: {m['confidence']:.0%}")
-        else:
-            print("      None found")
+        print(f"\n   💊 Final medicines found: {len(medicines)}")
+        for m in medicines:
+            print(f"\n      • OCR: '{m.get('ocr_text', '')}'")
+            print(f"        → Medicine: {m.get('medicine_name', '')}")
+            if m.get('dosage'):
+                print(f"        → Dosage: {m['dosage']}")
+            print(f"        → Confidence: {m.get('confidence', 0):.0%}")
 
-        if dosages:
-            print(f"\n   💉 Additional dosages: {', '.join(dosages[:5])}")
-
-        # Results
+        # Save results
         result = {
             'success': True,
             'image': image_path,
             'extracted_text': text,
             'medicines': medicines,
-            'dosages': dosages,
-            'overall_confidence': self._calculate_confidence(medicines, text)
+            'claude_used': self.claude.available
         }
 
-        # Save
-        with open('medicines_extracted.json', 'w', encoding='utf-8') as f:
+        output_path = project_root / 'medicines_extracted.json'
+        with open(output_path, 'w', encoding='utf-8') as f:
             json.dump(result, f, indent=2)
 
         print("\n" + "=" * 70)
         print("📊 FINAL SUMMARY")
         print("=" * 70)
-        print(f"\n🎯 Overall Confidence: {result['overall_confidence']:.0%}")
 
         if medicines:
-            print("\n✅ Medicines found:")
+            print("\n✅ Medicines identified:")
             for m in medicines:
-                print(f"   • {m['medicine_name']}")
+                print(f"   • {m.get('medicine_name', 'Unknown')}")
         else:
-            print("\n⚠️ No medicines found")
+            print("\n⚠️ No medicines identified")
 
-        print(f"\n💾 Saved: medicines_extracted.json")
+        print(f"\n💾 Saved: {output_path}")
 
         return result
-
-    def _extract_all_dosages(self, text: str) -> List[str]:
-        dosages = []
-        patterns = [
-            r'(\d+(?:\.\d+)?)\s*(?:mg|mcg|g|ml)',
-            r'/(\d+)(?:/|$)',
-            r'(\d{2,3})(?=\s|$)',
-        ]
-        for pattern in patterns:
-            matches = re.findall(pattern, text, re.IGNORECASE)
-            for match in matches:
-                if isinstance(match, tuple):
-                    dosages.append(f"{match[0]}{match[1] if len(match) > 1 else 'mg'}")
-                else:
-                    if len(str(match)) >= 2 and int(match) <= 500:
-                        dosages.append(f"{match}mg")
-        return list(set(dosages[:10]))
-
-    def _calculate_confidence(self, medicines: List[Dict], text: str) -> float:
-        if not medicines:
-            return 0.0
-        avg_conf = sum(m['confidence'] for m in medicines) / len(medicines)
-        return min(1.0, avg_conf)
 
 
 # ============ RUN ============
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python pipeline_fuzzy_only.py <image_path>")
+        print("Usage: python pipeline_test.py <image_path>")
+        print("Example: python pipeline_test.py example3.png")
         sys.exit(1)
 
     image_path = sys.argv[1]
 
     if not Path(image_path).exists():
-        print(f"❌ Image not found: {image_path}")
+        print(f" Image not found: {image_path}")
         sys.exit(1)
 
     pipeline = MedicalPipeline(verbose=True)
