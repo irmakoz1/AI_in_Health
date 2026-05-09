@@ -1,5 +1,0 @@
-[project]
-requires-python = "~=3.11.0"
-
-[tool.railway]
-pythonVersion = "3.11"
