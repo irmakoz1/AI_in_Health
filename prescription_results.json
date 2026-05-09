@@ -1,0 +1,100 @@
+{
+  "success": true,
+  "image": "C:\\Users\\irmak\\Desktop\\AI_in_Health\\example.png",
+  "extracted_text": "DD FORM 1289 1 NOV 71 DODPRESCRIPTION FOR (Ful name, address,& phone number under 12.give age) John R.O0eHM3USN U.S.S. Neverforgotten 0D178 MEDICAL FACILITY DATE U.S.SNeverforgotten 00178 399 R (Superscription) gm or ml. (Inscription) Tn BBellidenro 15 me Amphogel goed 120 me (Subscription) m+fTfoluton (Signa) 5ey5mQ ld a.c. MFGR: Wyeth EXP DATE: 12/02 LOT NO: P39K106 FILLED BY: KMT fackRFrost 10072 CDR.WD.USMR BNUMBER SIGNATURE RANK AND DEGREE EDITION OF 1 JAN 60 MAY BE USED FOR S/N0102LF-012-6201",
+  "medications": [],
+  "dosages": [
+    {
+      "value": "1",
+      "unit": "NOV",
+      "full_text": "1 NOV"
+    },
+    {
+      "value": "71",
+      "unit": "DODPRESCRIPTION",
+      "full_text": "71 DODPRESCRIPTION"
+    },
+    {
+      "value": "12",
+      "unit": "mg",
+      "full_text": "12"
+    },
+    {
+      "value": "3",
+      "unit": "USN",
+      "full_text": "3USN"
+    },
+    {
+      "value": "178",
+      "unit": "MEDICAL",
+      "full_text": "178 MEDICAL"
+    },
+    {
+      "value": "00178",
+      "unit": "mg",
+      "full_text": "00178 "
+    },
+    {
+      "value": "399",
+      "unit": "R",
+      "full_text": "399 R"
+    },
+    {
+      "value": "15",
+      "unit": "me",
+      "full_text": "15 me"
+    },
+    {
+      "value": "120",
+      "unit": "me",
+      "full_text": "120 me"
+    },
+    {
+      "value": "5",
+      "unit": "ey",
+      "full_text": "5ey"
+    },
+    {
+      "value": "5",
+      "unit": "mQ",
+      "full_text": "5mQ"
+    },
+    {
+      "value": "02",
+      "unit": "LOT",
+      "full_text": "02 LOT"
+    },
+    {
+      "value": "39",
+      "unit": "K",
+      "full_text": "39K"
+    },
+    {
+      "value": "106",
+      "unit": "FILLED",
+      "full_text": "106 FILLED"
+    },
+    {
+      "value": "1",
+      "unit": "JAN",
+      "full_text": "1 JAN"
+    },
+    {
+      "value": "60",
+      "unit": "MAY",
+      "full_text": "60 MAY"
+    },
+    {
+      "value": "0102",
+      "unit": "LF",
+      "full_text": "0102LF"
+    },
+    {
+      "value": "012",
+      "unit": "mg",
+      "full_text": "012"
+    }
+  ],
+  "summary": "Dosages: 1 NOV, 71 DODPRESCRIPTION, 12",
+  "claude_used": false
+}

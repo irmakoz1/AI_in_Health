@@ -1,0 +1,40 @@
+{
+  "success": true,
+  "image": "C:\\Users\\irmak\\Desktop\\AI_in_Health\\example3.png",
+  "ocr_confidence": 0.9071213483810425,
+  "extracted_text": "Medicine STALEV0125/312S/200 06 Dose Route Start date Frequency POHX5 Deane 12 Bleep 234 GMCNO.235 Indicatiop & Additional Instructions Agosins Pharmacist Check 14 LEVODOPA CALBIDOPA Supply Supply 18 ENTACAPONE Medicines Reconciliation (circie) Increased Decreased New 0200 No change dose dose",
+  "medicines": [
+    {
+      "ocr_text": "LEVODOPA",
+      "medicine_name": "LEVODOPA",
+      "dosage": "14 ",
+      "confidence": 0.918719208240509,
+      "reasoning": "Fuzzy matched to levodopa",
+      "source": "fuzzy",
+      "ocr_confidence": 0.8874384164810181
+    },
+    {
+      "ocr_text": "CALBIDOPA",
+      "medicine_name": "CARBIDOPA",
+      "dosage": "14 ",
+      "confidence": 0.8496585369110108,
+      "reasoning": "Fuzzy matched to carbidopa",
+      "source": "fuzzy",
+      "ocr_confidence": 0.8493170738220215
+    },
+    {
+      "ocr_text": "STALEV",
+      "medicine_name": "STALEVO",
+      "dosage": "0125",
+      "confidence": 0.8188122093677521,
+      "reasoning": "Fuzzy matched to stalevo",
+      "source": "fuzzy",
+      "ocr_confidence": 0.7876244187355042
+    }
+  ],
+  "dosages": [
+    "234mg"
+  ],
+  "overall_confidence": 0.8374379909038543,
+  "claude_used": true
+}
