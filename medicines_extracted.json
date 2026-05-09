@@ -1,6 +1,6 @@
 {
   "success": true,
-  "image": "C:\\Users\\irmak\\Desktop\\AI_in_Health\\example3.png",
+  "image": "C:\\Users\\irmak\\AppData\\Local\\Temp\\tmpkc2kq60r.png",
   "extracted_text": "Medicine\nSTALEV0125/312S/200\n06\nDose\nRoute Start date Frequency\nPOHX5\nDeane\n12\nBleep\n234\nGMCNO.235\nIndicatiop & Additional Instructions\nAgosins\nPharmacist\nCheck\n14\nLEVODOPA\nCALBIDOPA\nSupply\nSupply\n18\nENTACAPONE\nMedicines Reconciliation (circie)\nIncreased\nDecreased\nNew\n0200\nNo change\ndose\ndose",
   "medicines": [
     {
