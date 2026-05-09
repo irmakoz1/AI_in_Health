@@ -1,32 +1,47 @@
 {
   "success": true,
   "image": "C:\\Users\\irmak\\Desktop\\AI_in_Health\\example3.png",
-  "ocr_confidence": 0.9071213483810425,
+  "extracted_text": "Medicine\nSTALEV0125/312S/200\n06\nDose\nRoute Start date Frequency\nPOHX5\nDeane\n12\nBleep\n234\nGMCNO.235\nIndicatiop & Additional Instructions\nAgosins\nPharmacist\nCheck\n14\nLEVODOPA\nCALBIDOPA\nSupply\nSupply\n18\nENTACAPONE\nMedicines Reconciliation (circie)\nIncreased\nDecreased\nNew\n0200\nNo change\ndose\ndose",
   "medicines": [
     {
-      "ocr_text": "STALEV",
       "medicine_name": "STALEVO",
-      "dosage": "0125",
-      "confidence": 0.8188122093677521,
-      "source": "fuzzy"
+      "ocr_text": "STALEV",
+      "dosage": "012mg",
+      "confidence": 0.85
     },
     {
-      "ocr_text": "LEVODOPA",
       "medicine_name": "LEVODOPA",
-      "dosage": "14 ",
-      "confidence": 0.8687192082405091,
-      "source": "fuzzy"
+      "ocr_text": "LEVODOPA",
+      "dosage": "14mg",
+      "confidence": 0.95
     },
     {
-      "ocr_text": "CALBIDOPA",
       "medicine_name": "CARBIDOPA",
-      "dosage": "14 ",
-      "confidence": 0.8496585369110108,
-      "source": "fuzzy"
+      "ocr_text": "CALBIDOPA",
+      "dosage": "14mg",
+      "confidence": 0.85
+    },
+    {
+      "medicine_name": "ENTACAPONE",
+      "ocr_text": "ENTACAPONE",
+      "dosage": "18mg",
+      "confidence": 0.95
+    },
+    {
+      "medicine_name": "LEVOTHYROXINE",
+      "ocr_text": "LEVO",
+      "dosage": "14mg",
+      "confidence": 0.85
     }
   ],
   "dosages": [
-    "234mg"
+    "12mg",
+    "18mg",
+    "200mg",
+    "234mg",
+    "14mg",
+    "235mg",
+    "06mg"
   ],
-  "overall_confidence": 0.8457299848397574
+  "overall_confidence": 0.8899999999999999
 }
